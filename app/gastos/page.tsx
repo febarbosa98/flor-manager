@@ -6,8 +6,10 @@ import Navbar from "@/components/Navbar"
 import GastosForm from "@/components/GastosForm"
 import GastosTable from "@/components/GastosTable"
 import { listarGastos } from "@/lib/gastos"
+import { useRealtimeGastos } from "@/components/hooks/useRealtimeGastos"
 
 export default function GastosPage() {
+  useRealtimeGastos()
   const [dataInicio, setDataInicio] = useState("")
   const [dataFim, setDataFim] = useState("")
   const queryClient = useQueryClient()

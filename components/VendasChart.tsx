@@ -14,22 +14,20 @@ export default function VendasChart({vendas}:any){
 
 const vendasPorDia:any = {}
 
-vendas.forEach((v:any)=>{
+vendas.forEach((pedido:any)=>{
+  if(!pedido.data) return
 
-if(!v.data) return
+  const data = pedido.data?.seconds
+    ? new Date(pedido.data.seconds * 1000)
+    : new Date(pedido.data)
 
-const data = v.data.seconds
-? new Date(v.data.seconds * 1000)
-: new Date(v.data)
+  const dia = data.getDate()
 
-const dia = data.getDate()
+  if(!vendasPorDia[dia]){
+    vendasPorDia[dia] = 0
+  }
 
-if(!vendasPorDia[dia]){
-vendasPorDia[dia] = 0
-}
-
-vendasPorDia[dia] += Number(v.total) || 0
-
+  vendasPorDia[dia] += Number(pedido.total) || 0
 })
 
 const data = Object.keys(vendasPorDia).map((dia)=>({

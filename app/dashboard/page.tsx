@@ -6,8 +6,12 @@ import Dashboard from "@/components/DashboardCards"
 import VendasChart from "@/components/VendasChart"
 import { buscarEstatisticas } from "@/lib/dashboard"
 import { listarVendasPorMes } from "@/lib/vendas"
+import { useRealtimeGastos } from "@/components/hooks/useRealtimeGastos"
+import { useRealtimeVendas } from "@/components/hooks/useRealtimeVendas"
 
 export default function Home() {
+  useRealtimeVendas()
+useRealtimeGastos()
   const hoje = new Date()
   const mes = hoje.getMonth()
   const ano = hoje.getFullYear()

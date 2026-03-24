@@ -9,8 +9,32 @@ import Dashboard from "@/components/DashboardCards"
 import VendasChart from "@/components/VendasChart"
 import { listarVendasPorPedido } from "@/lib/vendas"
 import { buscarEstatisticas } from "@/lib/dashboard"
+import { useRealtimeVendas } from "@/components/hooks/useRealtimeVendas"
+
+function agruparPedidos(vendas: any[]) {
+  const pedidosMap: any = {}
+
+  vendas.forEach((v) => {
+    const pedidoId = v.pedidoId || v.id // fallback importante
+
+    if (!pedidosMap[pedidoId]) {
+      pedidosMap[pedidoId] = {
+        id: pedidoId,
+        data: v.data,
+        total: 0,
+        itens: []
+      }
+    }
+
+    pedidosMap[pedidoId].itens.push(v)
+    pedidosMap[pedidoId].total += Number(v.total) || 0
+  })
+
+  return Object.values(pedidosMap)
+}
 
 export default function Vendas() {
+  useRealtimeVendas()
   const hoje = new Date()
   const itensPorPagina = 10
 
@@ -22,11 +46,11 @@ export default function Vendas() {
 
   const queryClient = useQueryClient()
 
-  const { data: vendas = [], isLoading } = useQuery({
-    queryKey: ["vendas"],
-    queryFn: listarVendasPorPedido,
-    staleTime: 1000 * 60 * 5
-  })
+const { data: vendas = [] } = useQuery({
+  queryKey: ["vendas"],
+  queryFn: listarVendasPorPedido, // 🔥 obrigatório
+  enabled: false
+})
 
   const { data: stats } = useQuery({
     queryKey: ["dashboard", mes, ano],
@@ -39,18 +63,20 @@ export default function Vendas() {
 }
 
   // 🔥 filtro LOCAL (sem chamar Firebase)
- const vendasFiltradas = vendas.filter((v: any) => {
-  const data = v.data?.toDate ? v.data.toDate() : new Date(v.data)
+const pedidos = agruparPedidos(vendas)
 
-  // filtro por mês/ano
-  const mesmoMes = data.getMonth() === mes && data.getFullYear() === ano
+const vendasFiltradas = pedidos.filter((pedido: any) => {
+  const data = pedido.data?.toDate
+    ? pedido.data.toDate()
+    : new Date(pedido.data)
 
-  // filtro por período
+  const mesmoMes =
+    data.getMonth() === mes && data.getFullYear() === ano
+
   if (dataInicio && dataFim) {
     const inicio = parseDateLocal(dataInicio)
     const fim = parseDateLocal(dataFim)
-fim.setHours(23, 59, 59, 999)
-    fim.setHours(23, 59, 59)
+    fim.setHours(23, 59, 59, 999)
 
     return data >= inicio && data <= fim
   }
@@ -62,7 +88,7 @@ fim.setHours(23, 59, 59, 999)
   const fim = inicio + itensPorPagina
   const vendasPagina = vendasFiltradas.slice(inicio, fim)
 
-  if (isLoading) return <p>Carregando vendas...</p>
+ if (!vendas.length) return <p>Carregando vendas...</p>
   return (
     <div>
       <Navbar />
@@ -105,7 +131,7 @@ fim.setHours(23, 59, 59, 999)
         <div className="mt-20">
           <h1 className=" text-2xl font-bold mb-6 ">Registrar venda</h1>
           <VendaForm
-          reload={() => queryClient.invalidateQueries({ queryKey: ["vendas"] })}
+          
         />
 
 
