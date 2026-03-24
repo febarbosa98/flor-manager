@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query"
+
+
 
 interface ItemCarrinho {
   produtoId: string;
@@ -26,8 +29,11 @@ export default function VendaForm({ reload }: any) {
   const [busca, setBusca] = useState("")
 const [produtosFiltrados, setProdutosFiltrados] = useState<any[]>([])
 const [mostrarLista, setMostrarLista] = useState(false)
+const queryClient = useQueryClient()
 
-
+queryClient.invalidateQueries({ queryKey: ["vendas"] })
+queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+queryClient.invalidateQueries({ queryKey: ["vendas-mes"] })
 
 
   useEffect(() => {

@@ -1,76 +1,65 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
-import GastosForm from "@/components/GastosForm";
-import GastosTable from "@/components/GastosTable";
-import { listarGastos, listarGastosPorPeriodo } from "../../lib/gastos";
-// import { useAuth } from "@/components/hooks/useAuth"
-
-interface Gasto {
-  id: string;
-  tipo: "gasto" | "perda";
-  descricao: string;
-  valor: number;
-  data: Date;
-}
+"use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import Navbar from "@/components/Navbar"
+import GastosForm from "@/components/GastosForm"
+import GastosTable from "@/components/GastosTable"
+import { listarGastos } from "@/lib/gastos"
 
 export default function GastosPage() {
-  const [gastos, setGastos] = useState<Gasto[]>([]);
-  const [loadin, setLoadin] = useState(true);
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
+  const [dataInicio, setDataInicio] = useState("")
+  const [dataFim, setDataFim] = useState("")
+  const queryClient = useQueryClient()
 
-  async function carregarGastos() {
-    try {
-      const data = await listarGastos();
-      setGastos(data);
-    } catch (error) {
-      console.error("Erro ao carregar gastos:", error);
-    } finally {
-      setLoadin(false);
-    }
+  const { data: gastos = [], isLoading } = useQuery({
+    queryKey: ["gastos"],
+    queryFn: listarGastos,
+    staleTime: 1000 * 60 * 5
+  })
+
+  // ✅ função correta (sem bug de timezone)
+  function parseDateLocal(dateString: string) {
+    const [ano, mes, dia] = dateString.split("-").map(Number)
+    return new Date(ano, mes - 1, dia)
   }
 
-  async function filtrarPorPeriodo() {
-    if (!dataInicio || !dataFim) {
-      carregarGastos();
-      return;
+  // ✅ filtro correto
+  const gastosFiltrados = gastos.filter((g: any) => {
+    const data = g.data?.toDate ? g.data.toDate() : new Date(g.data)
+
+    if (dataInicio && dataFim) {
+      const inicio = parseDateLocal(dataInicio)
+      const fim = parseDateLocal(dataFim)
+      fim.setHours(23, 59, 59, 999)
+
+      return data >= inicio && data <= fim
     }
 
-    try {
-      setLoadin(true);
-      const inicio = new Date(dataInicio);
-      const fim = new Date(dataFim);
-      const data = await listarGastosPorPeriodo(inicio, fim);
-      setGastos(data);
-    } catch (error) {
-      console.error("Erro ao filtrar gastos:", error);
-    } finally {
-      setLoadin(false);
-    }
-  }
+    return true
+  })
 
+  // 🔥 reset automático (UX profissional)
   useEffect(() => {
-    carregarGastos();
-  }, []);
+    // opcional: pode usar pra logs ou efeitos futuros
+  }, [dataInicio, dataFim])
 
-// const { loading } = useAuth()
-
-  // if (loading) return <p>Carregando...</p>
+  if (isLoading) return <p>Carregando...</p>
 
   return (
     <div>
       <Navbar />
+
       <div className="p-10">
         <h1 className="text-2xl font-bold mb-6">Gastos e Perdas</h1>
 
-        {/* Filtros por período */}
+        {/* Filtros */}
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
           <h2 className="text-lg font-semibold mb-4">Filtrar por Período</h2>
+
           <div className="flex gap-4 items-end">
             <div>
-              <label className="block text-sm font-medium mb-1">Data Início</label>
+              <label className="block text-sm mb-1">Data Início</label>
               <input
                 type="date"
                 value={dataInicio}
@@ -78,8 +67,9 @@ export default function GastosPage() {
                 className="p-2 border rounded"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium mb-1">Data Fim</label>
+              <label className="block text-sm mb-1">Data Fim</label>
               <input
                 type="date"
                 value={dataFim}
@@ -87,32 +77,32 @@ export default function GastosPage() {
                 className="p-2 border rounded"
               />
             </div>
-            <button
-              onClick={filtrarPorPeriodo}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              Filtrar
-            </button>
+
             <button
               onClick={() => {
-                setDataInicio("");
-                setDataFim("");
-                carregarGastos();
+                setDataInicio("")
+                setDataFim("")
               }}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              className="bg-gray-500 text-white px-4 py-2 rounded"
             >
               Limpar
             </button>
           </div>
         </div>
 
-        <GastosForm reload={carregarGastos} />
-        {loadin ? (
-          <p>Carregando...</p>
-        ) : (
-          <GastosTable gastos={gastos} reload={carregarGastos} />
-        )}
+        <GastosForm
+          reload={() =>
+            queryClient.invalidateQueries({ queryKey: ["gastos"] })
+          }
+        />
+
+        <GastosTable
+          gastos={gastosFiltrados}
+          reload={() =>
+            queryClient.invalidateQueries({ queryKey: ["gastos"] })
+          }
+        />
       </div>
     </div>
-  );
+  )
 }

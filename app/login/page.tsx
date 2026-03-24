@@ -53,7 +53,7 @@ export default function LoginPage() {
         >
           Entrar
         </button>
-        <a href="/">inicio</a>
+        
       </div>
     </div>
   )

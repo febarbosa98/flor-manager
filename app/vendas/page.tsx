@@ -1,66 +1,68 @@
+"use client"
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
-"use client";
-
-import { useEffect, useState } from "react";
-import VendaForm from "@/components/VendaForm";
-import VendaTable from "@/components/VendaTable";
-import Navbar from "@/components/Navbar";
-import Dashboard from "@/components/DashboardCards";
-import { listarVendasPorPedido, listarVendasPorPeriodo } from "@/lib/vendas";
-import { buscarEstatisticas } from "@/lib/dashboard";
-import VendasChart from "@/components/VendasChart";
-// import { useAuth } from "@/components/hooks/useAuth"
+import { useState } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import Navbar from "@/components/Navbar"
+import VendaForm from "@/components/VendaForm"
+import VendaTable from "@/components/VendaTable"
+import Dashboard from "@/components/DashboardCards"
+import VendasChart from "@/components/VendasChart"
+import { listarVendasPorPedido } from "@/lib/vendas"
+import { buscarEstatisticas } from "@/lib/dashboard"
 
 export default function Vendas() {
-  const [vendas, setVendas] = useState<{ id: string }[]>([]);
-  const [stats, setStats] = useState<any>(null);
-  const hoje = new Date();
-  const itensPorPagina = 10;
-  const [pagina, setPagina] = useState(1);
-  // const { loading } = useAuth()
+  const hoje = new Date()
+  const itensPorPagina = 10
 
-  const [mes, setMes] = useState(hoje.getMonth());
-  const [ano, setAno] = useState(hoje.getFullYear());
+  const [pagina, setPagina] = useState(1)
+  const [mes, setMes] = useState(hoje.getMonth())
+  const [ano, setAno] = useState(hoje.getFullYear())
+  const [dataInicio, setDataInicio] = useState("")
+  const [dataFim, setDataFim] = useState("")
 
-  const [dataInicio,setDataInicio] = useState("")
-  const [dataFim,setDataFim] = useState("")
+  const queryClient = useQueryClient()
 
-  async function carregar() {
-    const data = await listarVendasPorPedido();
-    const statsData = await buscarEstatisticas(ano, mes);
+  const { data: vendas = [], isLoading } = useQuery({
+    queryKey: ["vendas"],
+    queryFn: listarVendasPorPedido,
+    staleTime: 1000 * 60 * 5
+  })
 
-    setVendas(data);
-    setStats(statsData);
-  }
-
- async function filtrar(){
-
-if(!dataInicio || !dataFim) return
-
-const [anoI, mesI, diaI] = dataInicio.split("-").map(Number)
-const [anoF, mesF, diaF] = dataFim.split("-").map(Number)
-
-const inicio = new Date(anoI, mesI - 1, diaI, 0, 0, 0)
-const fim = new Date(anoF, mesF - 1, diaF, 23, 59, 59)
-
-const data = await listarVendasPorPeriodo(inicio,fim)
-
-setPagina(1)
-setVendas(data)
-
+  const { data: stats } = useQuery({
+    queryKey: ["dashboard", mes, ano],
+    queryFn: () => buscarEstatisticas(ano, mes),
+    staleTime: 1000 * 60 * 5
+  })
+  function parseDateLocal(dateString: string) {
+  const [ano, mes, dia] = dateString.split("-").map(Number)
+  return new Date(ano, mes - 1, dia, 0, 0, 0)
 }
 
-  useEffect(() => {
-    carregar();
-  }, [mes, ano]);
+  // 🔥 filtro LOCAL (sem chamar Firebase)
+ const vendasFiltradas = vendas.filter((v: any) => {
+  const data = v.data?.toDate ? v.data.toDate() : new Date(v.data)
 
-  const inicio = (pagina - 1) * itensPorPagina;
-  const fim = inicio + itensPorPagina;
+  // filtro por mês/ano
+  const mesmoMes = data.getMonth() === mes && data.getFullYear() === ano
 
-  const vendasPagina = vendas.slice(inicio, fim);
+  // filtro por período
+  if (dataInicio && dataFim) {
+    const inicio = parseDateLocal(dataInicio)
+    const fim = parseDateLocal(dataFim)
+fim.setHours(23, 59, 59, 999)
+    fim.setHours(23, 59, 59)
 
-  // if (loading) return <p>Carregando...</p>
+    return data >= inicio && data <= fim
+  }
+
+  return mesmoMes
+})
+
+  const inicio = (pagina - 1) * itensPorPagina
+  const fim = inicio + itensPorPagina
+  const vendasPagina = vendasFiltradas.slice(inicio, fim)
+
+  if (isLoading) return <p>Carregando vendas...</p>
   return (
     <div>
       <Navbar />
@@ -102,7 +104,9 @@ setVendas(data)
 
         <div className="mt-20">
           <h1 className=" text-2xl font-bold mb-6 ">Registrar venda</h1>
-          <VendaForm reload={carregar} />
+          <VendaForm
+          reload={() => queryClient.invalidateQueries({ queryKey: ["vendas"] })}
+        />
 
 
 <div className="flex gap-4 mb-6 items-end">
@@ -127,15 +131,18 @@ className="border p-2 rounded"
 />
 </div>
 
-<button
-onClick={filtrar}
+{/* <button
+onClick={() => queryClient.invalidateQueries({ queryKey: ["vendas"] })}
 className="btn-verde"
 >
 Filtrar
-</button>
+</button> */}
 
 <button
-onClick={carregar}
+onClick={() => {
+            setDataInicio("")
+            setDataFim("")
+          }}
 className="btn-cinza"
 >
 Limpar
@@ -143,11 +150,14 @@ Limpar
 
 </div>
 
-          <VendaTable vendas={vendasPagina} reload={carregar} />
+          <VendaTable
+          vendas={vendasPagina}
+          reload={() => queryClient.invalidateQueries({ queryKey: ["vendas"] })}
+        />
 
           <div className="flex gap-2 mt-6">
             {Array.from(
-              { length: Math.ceil(vendas.length / itensPorPagina) },
+              { length: Math.ceil(vendasFiltradas.length / itensPorPagina) },
               (_, i) => (
                 <button
                   key={i}
@@ -161,7 +171,7 @@ ${pagina === i + 1 ? "bg-black text-white" : ""}
               ),
             )}
           </div>
-          <VendasChart vendas={vendas} />
+          <VendasChart vendas={vendasFiltradas}  />
         </div>
       </div>
     </div>

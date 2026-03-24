@@ -1,5 +1,5 @@
 "use client"
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ProdutoForm from "@/components/ProdutoForm"
 import ProdutoTable from "@/components/ProdutoTable"
 import { listarProdutos } from "@/lib/produtos"

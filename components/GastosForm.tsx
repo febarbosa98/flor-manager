@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { criarGasto } from "../lib/gastos";
+import { useQueryClient } from "@tanstack/react-query"
+
 
 interface GastosFormProps {
   reload: () => void;
@@ -12,6 +14,10 @@ export default function GastosForm({ reload }: GastosFormProps) {
   const [tipo, setTipo] = useState<"gasto" | "perda">("gasto");
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
+  const queryClient = useQueryClient()
+
+  queryClient.invalidateQueries({ queryKey: ["gastos"] })
+queryClient.invalidateQueries({ queryKey: ["dashboard"] })
 
   async function salvarGasto() {
     if (!descricao || !valor) {
