@@ -74,7 +74,7 @@ Preço de venda sugerido: <b>R$ {preco}</b>
 
 <button
 onClick={salvar}
-className="bg-black text-white px-4"
+className="btn-cinza"
 >
 
 Salvar

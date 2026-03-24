@@ -114,6 +114,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-rin2g: #0a0a0a;
 }
 
 @layer base {
@@ -126,4 +127,14 @@
   html {
     @apply font-sans;
   }
+
+  
 }
+
+.btn-verde{
+    @apply bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600;
+  }
+
+   .btn-cinza{
+    @apply bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600;
+  }

@@ -12,7 +12,7 @@ if(!stats) return null
 
 return(
 
-<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-10">
+<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-6 mb-10">
 
 <div className="p-6 border rounded-lg">
 <h2 className="text-sm text-gray-500">Vendas hoje</h2>
@@ -37,6 +37,16 @@ return(
 <div className="p-6 border rounded-lg">
 <h2 className="text-sm text-gray-500">Produto mais vendido</h2>
 <p className="text-2xl font-bold">{stats.maisVendido}</p>
+</div>
+
+<div className="p-6 border rounded-lg">
+<h2 className="text-sm text-gray-500">Gastos do mês</h2>
+<p className="text-2xl font-bold text-red-600">R$ {stats.gastosMes?.toFixed(2) || "0.00"}</p>
+</div>
+
+<div className="p-6 border rounded-lg">
+<h2 className="text-sm text-gray-500">Perdas do mês</h2>
+<p className="text-2xl font-bold text-yellow-600">R$ {stats.perdasMes?.toFixed(2) || "0.00"}</p>
 </div>
 
 </div>

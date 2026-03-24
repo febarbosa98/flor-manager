@@ -7,9 +7,10 @@ import VendaForm from "@/components/VendaForm";
 import VendaTable from "@/components/VendaTable";
 import Navbar from "@/components/Navbar";
 import Dashboard from "@/components/DashboardCards";
-import { listarVendasPorMes, listarVendasPorPeriodo } from "@/lib/vendas";
+import { listarVendasPorPedido, listarVendasPorPeriodo } from "@/lib/vendas";
 import { buscarEstatisticas } from "@/lib/dashboard";
 import VendasChart from "@/components/VendasChart";
+// import { useAuth } from "@/components/hooks/useAuth"
 
 export default function Vendas() {
   const [vendas, setVendas] = useState<{ id: string }[]>([]);
@@ -17,6 +18,7 @@ export default function Vendas() {
   const hoje = new Date();
   const itensPorPagina = 10;
   const [pagina, setPagina] = useState(1);
+  // const { loading } = useAuth()
 
   const [mes, setMes] = useState(hoje.getMonth());
   const [ano, setAno] = useState(hoje.getFullYear());
@@ -25,7 +27,7 @@ export default function Vendas() {
   const [dataFim,setDataFim] = useState("")
 
   async function carregar() {
-    const data = await listarVendasPorMes(ano, mes);
+    const data = await listarVendasPorPedido();
     const statsData = await buscarEstatisticas(ano, mes);
 
     setVendas(data);
@@ -58,6 +60,7 @@ setVendas(data)
 
   const vendasPagina = vendas.slice(inicio, fim);
 
+  // if (loading) return <p>Carregando...</p>
   return (
     <div>
       <Navbar />
@@ -126,14 +129,14 @@ className="border p-2 rounded"
 
 <button
 onClick={filtrar}
-className="px-4 py-2 bg-black text-white rounded"
+className="btn-verde"
 >
 Filtrar
 </button>
 
 <button
 onClick={carregar}
-className="px-4 py-2 border rounded"
+className="btn-cinza"
 >
 Limpar
 </button>

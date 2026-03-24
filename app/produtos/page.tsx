@@ -1,52 +1,58 @@
 "use client"
 
-import { useEffect,useState } from "react"
 import ProdutoForm from "@/components/ProdutoForm"
 import ProdutoTable from "@/components/ProdutoTable"
 import { listarProdutos } from "@/lib/produtos"
 import Navbar from "@/components/Navbar"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
 
-export default function Produtos(){
+export default function Produtos() {
 
-const [produtos,setProdutos] = useState<{ id: string }[]>([])
+  const [filtro, setFiltro] = useState("")
+  const queryClient = useQueryClient()
 
-async function carregar(){
+  const { data: produtos = [], isLoading } = useQuery({
+    queryKey: ["produtos"],
+    queryFn: listarProdutos
+  })
 
-const data = await listarProdutos()
+  const produtosFiltrados = produtos.filter((produto: any) => {
+    const termo = filtro.toLowerCase()
 
-setProdutos(data)
+    return (
+      produto.nome?.toLowerCase().includes(termo) ||
+      produto.custo?.toString().includes(termo) ||
+      produto.preco?.toString().includes(termo)
+    )
+  })
 
-}
+  if (isLoading) return <p>Carregando...</p>
 
-useEffect(()=>{
-
-// eslint-disable-next-line react-hooks/set-state-in-effect
-carregar()
-
-},[])
-
-return(
-
+  return (
     <>
-    <Navbar/>
-    <div className="p-10">
+      <Navbar />
 
-<h1 className="text-2xl font-bold mb-6">
+      <div className="p-10">
+        <h1 className="text-2xl font-bold mb-6">Produtos</h1>
 
-Produtos
+        <ProdutoForm
+          reload={() => queryClient.invalidateQueries({ queryKey: ["produtos"] })}
+        />
 
-</h1>
+        <input
+          type="text"
+          placeholder="Buscar produto..."
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          className="border p-2 mb-4 w-full"
+        />
 
-<ProdutoForm reload={carregar}/>
-
-<ProdutoTable
-produtos={produtos}
-reload={carregar}
-/>
-
-</div>
+        <ProdutoTable
+          produtos={produtosFiltrados}
+          reload={() => queryClient.invalidateQueries({ queryKey: ["produtos"] })}
+        />
+      </div>
     </>
-
-)
-
+  )
 }

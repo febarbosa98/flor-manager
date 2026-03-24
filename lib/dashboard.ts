@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "./firebase"
+import { calcularTotalGastosMes, calcularTotalPerdasMes } from "./gastos"
 
 export async function buscarEstatisticas(ano:number, mes:number){
 
@@ -73,13 +74,19 @@ maisVendido = nome
 
 })
 
+// Calcular gastos e perdas do mês
+const gastosMes = await calcularTotalGastosMes(mesAtual + 1, anoAtual)
+const perdasMes = await calcularTotalPerdasMes(mesAtual + 1, anoAtual)
+
 return {
 vendasHoje,
 lucroTotal,
 vendasMes,
 lucroMes,
 produtosVendidos,
-maisVendido
+maisVendido,
+gastosMes,
+perdasMes
 }
 
 }
