@@ -23,7 +23,7 @@ export default function LoginPage() {
     })
 
     toast.success("Login realizado!")
-    router.push("/produtos")
+    router.push("/dashboard")
   } catch {
     toast.error("Email ou senha inválidos")
   }
