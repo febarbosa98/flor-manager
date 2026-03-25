@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogDescription
 } from "@/components/ui/dialog";
+import { formatarMoeda } from "@/lib/formatarMoeda";
 
 export default function ProdutoTable({ produtos, reload }: any) {
   const [nome, setNome] = useState("");
@@ -65,30 +66,31 @@ toast.error("Erro ao atualizar produto")
   }
 
   return (
-    <table className="w-full border">
-      <thead>
+    <table className="w-full border card table-auto md:table-fixed">
+      <thead className="text-lg text-secondary font-semibold">
         <tr className="border-b">
           <th className="p-2 text-left">Nome</th>
           <th className="p-2 text-left">Preço de custo</th>
           <th className="p-2 text-left">Preço de venda</th>
           <th className="p-2 text-left">Estoque</th>
-          <th className="p-2">Ações</th>
+          <th className="p-2 text-left">Ações</th>
         </tr>
       </thead>
 
       <tbody>
 {produtos.map((produto:any)=>(
-<tr key={produto.id} className="border-b">
+<tr key={produto.id} className="border-b ">
 
-<td className="p-2">{produto.nome}</td>
-<td className="p-2">R$ {produto.custo}</td>
-<td className="p-2">R$ {produto.preco}</td>
+<td className="p-2 capitalize ">{produto.nome}</td>
+<td className="p-2"> {formatarMoeda(produto.custo)}</td>
+<td className="p-2"> {formatarMoeda(produto.preco)}</td>
 <td className="p-2">{produto.estoque}</td>
 
 <td className="p-2 flex gap-2">
 
 <Button
-variant="secondary"
+// variant="secondary"
+className="btn-cinza"
 onClick={()=>{
 abrirEdicao(produto)
 setDialogOpen(true)
@@ -98,8 +100,15 @@ Editar
 </Button>
 
 <Button
-variant="destructive"
-onClick={()=>remover(produto.id)}
+className="btn-red"
+onClick={()=>
+{
+if (confirm("Tem certeza que deseja excluir este pedido inteiro?")) {
+
+  
+  remover(produto.id) 
+}
+}}
 >
 Excluir
 </Button>
@@ -125,26 +134,32 @@ Altere as informações do produto abaixo
 
 </DialogHeader>
 
-<div className="flex flex-col gap-4">
+<div className="flex flex-col gap-2">
 
+<label>Nome Produto</label> 
 <Input
 value={nome}
 onChange={(e)=>setNome(e.target.value)}
+className="input capitalize"
 />
 
+<label className="mt-2">Preço de venda</label> 
 <Input
 type="number"
 value={preco}
 onChange={(e)=>setPreco(e.target.value)}
+className="input"
 />
 
+<label className="mt-2">Estoque</label> 
 <Input
 type="number"
 value={estoque}
 onChange={(e)=>setEstoque(e.target.value)}
+className="input"
 />
 
-<Button onClick={salvarEdicao}>
+<Button onClick={salvarEdicao} className="btn-cinza">
 Salvar
 </Button>
 

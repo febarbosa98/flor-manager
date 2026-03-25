@@ -95,7 +95,7 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
                     <option value="perda">Perda</option>
                   </select>
                 ) : (
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  <span className={`p-2 text-xs font-medium rounded-full ${
                     gasto.tipo === "gasto"
                       ? "bg-red-100 text-red-800"
                       : "bg-yellow-100 text-yellow-800"
@@ -104,7 +104,7 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
                   </span>
                 )}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap capitalize">
                 {editando === gasto.id ? (
                   <input
                     type="text"
@@ -137,13 +137,13 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
                   <div className="flex gap-2">
                     <button
                       onClick={() => salvarEdicao(gasto.id)}
-                      className="text-green-600 hover:text-green-900"
+                      className="btn-verde"
                     >
                       Salvar
                     </button>
                     <button
                       onClick={() => setEditando(null)}
-                      className="text-gray-600 hover:text-gray-900"
+                      className="btn-red"
                     >
                       Cancelar
                     </button>
@@ -152,13 +152,13 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
                   <div className="flex gap-2">
                     <button
                       onClick={() => iniciarEdicao(gasto)}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className="btn-cinza"
                     >
                       Editar
                     </button>
                     <button
                       onClick={() => deletarGastoHandler(gasto.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="btn-red"
                     >
                       Excluir
                     </button>

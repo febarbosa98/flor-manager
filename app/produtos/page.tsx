@@ -33,8 +33,8 @@ export default function Produtos() {
     <>
       <Navbar />
 
-      <div className="p-10">
-        <h1 className="text-2xl font-bold mb-6">Produtos</h1>
+      <div className="container mx-auto mt-10 p-4">
+        <h1 className="text-2xl text-secondary font-bold mb-6">Produtos</h1>
 
         <ProdutoForm
           reload={() => queryClient.invalidateQueries({ queryKey: ["produtos"] })}
@@ -45,7 +45,7 @@ export default function Produtos() {
           placeholder="Buscar produto..."
           value={filtro}
           onChange={(e) => setFiltro(e.target.value)}
-          className="border p-2 mb-4 w-full"
+          className="border p-2 mb-4 w-full input"
         />
 
         <ProdutoTable

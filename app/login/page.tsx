@@ -5,6 +5,7 @@ import { login } from "@/lib/auth"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { setCookie } from "nookies"
+import Navbar from "@/components/Navbar"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -30,31 +31,34 @@ export default function LoginPage() {
 }
 
   return (
-    <div className="h-screen flex items-center justify-center">
-      <div className="border p-6 rounded w-full max-w-sm">
+    <section className="min-h-screen flex flex-col">
+      <Navbar/>
+    <div className="flex mt-0 flex-1 justify-center items-center">
+      <div className="border bg-accent p-6 rounded w-full max-w-sm">
         <h1 className="text-xl font-bold mb-4">Login</h1>
 
         <input
           placeholder="Email"
-          className="border p-2 w-full mb-3"
+          className="input w-full mb-3"
           onChange={(e) => setEmail(e.target.value)}
-        />
+          />
 
         <input
           type="password"
           placeholder="Senha"
-          className="border p-2 w-full mb-4"
+          className="input w-full mb-4"
           onChange={(e) => setSenha(e.target.value)}
-        />
+          />
 
         <button
           onClick={handleLogin}
-          className="w-full bg-black text-white p-2 rounded"
-        >
+          className="w-full btn-verde"
+          >
           Entrar
         </button>
         
       </div>
     </div>
+          </section>
   )
 }

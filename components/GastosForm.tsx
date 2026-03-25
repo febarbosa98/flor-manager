@@ -43,14 +43,14 @@ export default function GastosForm({ reload }: GastosFormProps) {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-xl font-semibold mb-4">Adicionar Gasto/Perda</h2>
+      <h2 className="text-xl text-secondary font-semibold mb-4">Adicionar Gasto/Perda</h2>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Tipo</label>
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as "gasto" | "perda")}
-            className="w-full p-2 border rounded"
+            className="w-full input"
           >
             <option value="gasto">Gasto</option>
             <option value="perda">Perda</option>
@@ -63,7 +63,7 @@ export default function GastosForm({ reload }: GastosFormProps) {
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
             placeholder="Ex: Compra de vasos, Produto estragado..."
-            className="w-full p-2 border rounded"
+            className="w-full input"
           />
         </div>
         <div>
@@ -74,13 +74,13 @@ export default function GastosForm({ reload }: GastosFormProps) {
             value={valor}
             onChange={(e) => setValor(e.target.value)}
             placeholder="0.00"
-            className="w-full p-2 border rounded"
+            className="w-full input"
           />
         </div>
       </div>
       <button
         onClick={salvarGasto}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        className="mt-4 btn-verde"
       >
         Salvar
       </button>

@@ -39,8 +39,8 @@ return(
 
 <div className="border rounded-lg p-6 mt-10">
 
-<h2 className="text-lg font-bold mb-4">
-Vendas por dia
+<h2 className="text-lg text-secondary font-bold mb-4">
+Vendas do Mês
 </h2>
 
 <ResponsiveContainer width="100%" height={300}>

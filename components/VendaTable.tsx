@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { deletarVenda } from "@/lib/vendas";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog,  DialogTrigger } from "./ui/dialog";
 
 export default function VendaTable({ vendas, reload }: any) {
   const [pedidoExpandido, setPedidoExpandido] = useState<string | null>(null);
@@ -34,13 +34,13 @@ export default function VendaTable({ vendas, reload }: any) {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <div>
-                  <span className="font-semibold text-lg">Pedido #{pedido.id.slice(-6)}</span>
+                  <span className="font-semibold text-secondary text-lg">Pedido #{pedido.id.slice(-6)}</span>
                   <span className="text-sm text-gray-600 ml-4">
                     {pedido.data?.toDate ? pedido.data.toDate().toLocaleDateString("pt-BR") : "-"}
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  <span className="text-sm bg-accent text-accent-foreground px-2 py-1 rounded">
                     {pedido.itens.length} produto(s)
                   </span>
                 </div>
@@ -58,7 +58,8 @@ export default function VendaTable({ vendas, reload }: any) {
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
-                        variant="outline"
+                        // variant="outline"
+                        className="btn-cinza"
                         size="sm"
                         onClick={() => setPedidoExpandido(pedidoExpandido === pedido.id ? null : pedido.id)}
                       >
@@ -69,7 +70,7 @@ export default function VendaTable({ vendas, reload }: any) {
                   </Dialog>
 
                   <Button
-                    variant="destructive"
+                    className="btn-red"
                     size="sm"
                     onClick={() => {
                       if (confirm("Tem certeza que deseja excluir este pedido inteiro?")) {
@@ -101,7 +102,7 @@ export default function VendaTable({ vendas, reload }: any) {
                 <tbody>
                   {pedido.itens.map((item: any) => (
                     <tr key={item.id} className="border-b">
-                      <td className="p-2">{item.produto}</td>
+                      <td className="p-2 capitalize">{item.produto}</td>
                       <td className="p-2 text-center">{item.quantidade}</td>
                       <td className="p-2 text-right">
                         R$ {Number(item.total / item.quantidade).toFixed(2)}
@@ -114,7 +115,7 @@ export default function VendaTable({ vendas, reload }: any) {
                       </td>
                       <td className="p-2 text-center">
                         <Button
-                          variant="destructive"
+                          className="btn-red"
                           size="sm"
                           onClick={() => {
                             if (confirm("Tem certeza que deseja excluir este item?")) {

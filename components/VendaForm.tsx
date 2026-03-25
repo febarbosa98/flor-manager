@@ -133,7 +133,7 @@ function selecionarProduto(produto: any) {
     <div className="space-y-6">
       {/* Formulário para adicionar produtos */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4">Adicionar Produto à Venda</h3>
+        <h3 className="text-lg text-secondary font-semibold mb-4">Adicionar Produto à Venda</h3>
         <div className="flex gap-4 items-end">
           <div className="flex-1">
             <div className="flex-1 relative">
@@ -181,7 +181,7 @@ function selecionarProduto(produto: any) {
             />
           </div>
 
-          <Button onClick={adicionarAoCarrinho} className="bg-blue-500 hover:bg-blue-600">
+          <Button onClick={adicionarAoCarrinho} className="btn-verde">
             Adicionar
           </Button>
         </div>
@@ -193,7 +193,7 @@ function selecionarProduto(produto: any) {
             </span>
             <Dialog open={modalAberto} onOpenChange={setModalAberto}>
               <DialogTrigger asChild>
-                <Button className="bg-green-500 hover:bg-green-600">
+                <Button className="btn-cinza">
                   Ver Carrinho ({carrinho.length})
                 </Button>
               </DialogTrigger>
@@ -238,7 +238,7 @@ function selecionarProduto(produto: any) {
 
                     <Button
                       onClick={registrarVendas}
-                      className="w-full bg-green-500 hover:bg-green-600 text-white py-3 text-lg"
+                      className="w-full bg-primary cursor-pointer hover:bg-green-500 text-white py-3 text-lg"
                     >
                       Registrar Venda (R$ {Number(calcularTotal()).toFixed(2)})
                     </Button>

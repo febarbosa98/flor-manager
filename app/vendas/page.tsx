@@ -93,13 +93,13 @@ const vendasFiltradas = pedidos.filter((pedido: any) => {
     <div>
       <Navbar />
 
-      <div className="p-10">
-        <h1 className="text-2xl font-bold mb-6">Vendas</h1>
+      <div className="container mx-auto mt-10 p-4">
+        <h1 className="text-2xl text-secondary font-bold mb-6">Vendas</h1>
         <div className="flex gap-4 mb-6">
           <select
             value={mes}
             onChange={(e) => setMes(Number(e.target.value))}
-            className="border p-2 rounded"
+            className="border p-2 rounded  bg-card"
           >
             <option value={0}>Janeiro</option>
             <option value={1}>Fevereiro</option>
@@ -118,7 +118,7 @@ const vendasFiltradas = pedidos.filter((pedido: any) => {
           <select
             value={ano}
             onChange={(e) => setAno(Number(e.target.value))}
-            className="border p-2 rounded"
+            className="border p-2 rounded  bg-card"
           >
             <option value={2024}>2024</option>
             <option value={2025}>2025</option>
@@ -128,14 +128,14 @@ const vendasFiltradas = pedidos.filter((pedido: any) => {
 
         <Dashboard stats={stats} />
 
-        <div className="mt-20">
-          <h1 className=" text-2xl font-bold mb-6 ">Registrar venda</h1>
+        <div className="mt-20 ">
+          <h1 className=" text-2xl text-secondary font-bold mb-6 ">Registrar venda</h1>
           <VendaForm
           
         />
 
 
-<div className="flex gap-4 mb-6 items-end">
+<div className="flex gap-4 my-6 items-end ">
 
 <div className="flex flex-col">
 <label className="text-sm">Data início</label>
@@ -143,7 +143,7 @@ const vendasFiltradas = pedidos.filter((pedido: any) => {
 type="date"
 value={dataInicio}
 onChange={(e)=>setDataInicio(e.target.value)}
-className="border p-2 rounded"
+className="border p-2 rounded  bg-card"
 />
 </div>
 
@@ -153,7 +153,7 @@ className="border p-2 rounded"
 type="date"
 value={dataFim}
 onChange={(e)=>setDataFim(e.target.value)}
-className="border p-2 rounded"
+className="border p-2 rounded  bg-card"
 />
 </div>
 
@@ -189,7 +189,7 @@ Limpar
                   key={i}
                   onClick={() => setPagina(i + 1)}
                   className={`px-3 py-1 border rounded 
-${pagina === i + 1 ? "bg-black text-white" : ""}
+${pagina === i + 1 ? "bg-primary text-white" : "bg-white text-black"}
 `}
                 >
                   {i + 1}

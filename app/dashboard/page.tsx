@@ -29,11 +29,13 @@ useRealtimeGastos()
   })
 
   return (
-    <div>
+    <div className="" >
       <Navbar />
+<div className="container mx-auto mt-15 px-4">
 
       <Dashboard stats={stats} />
       <VendasChart vendas={vendas} />
+</div>
     </div>
   )
 }

@@ -52,12 +52,12 @@ export default function GastosPage() {
     <div>
       <Navbar />
 
-      <div className="p-10">
-        <h1 className="text-2xl font-bold mb-6">Gastos e Perdas</h1>
+      <div className="container mx-auto mt-10 p-4">
+        <h1 className="text-2xl text-secondary font-bold mb-6">Gastos e Perdas</h1>
 
         {/* Filtros */}
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-lg font-semibold mb-4">Filtrar por Período</h2>
+          <h2 className="text-lg text-secondary font-semibold mb-4">Filtrar por Período</h2>
 
           <div className="flex gap-4 items-end">
             <div>
@@ -85,7 +85,7 @@ export default function GastosPage() {
                 setDataInicio("")
                 setDataFim("")
               }}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
+              className="btn-cinza"
             >
               Limpar
             </button>
