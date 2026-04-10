@@ -8,13 +8,14 @@ import { buscarEstatisticas } from "@/lib/dashboard"
 import { listarVendasPorMes } from "@/lib/vendas"
 import { useRealtimeGastos } from "@/components/hooks/useRealtimeGastos"
 import { useRealtimeVendas } from "@/components/hooks/useRealtimeVendas"
+import { useState } from "react"
 
 export default function Home() {
   useRealtimeVendas()
 useRealtimeGastos()
   const hoje = new Date()
-  const mes = hoje.getMonth()
-  const ano = hoje.getFullYear()
+  const [mes, setMes] = useState(hoje.getMonth())
+   const [ano, setAno] = useState(hoje.getFullYear())
 
   const { data: vendas = [] } = useQuery({
     queryKey: ["vendas-mes", mes, ano],
@@ -32,7 +33,36 @@ useRealtimeGastos()
     <div className="" >
       <Navbar />
 <div className="container mx-auto mt-15 px-4">
+      <div className="flex gap-4 mb-6">
+          <select
+            value={mes}
+            onChange={(e) => setMes(Number(e.target.value))}
+            className="border p-2 rounded  bg-card"
+          >
+            <option value={0}>Janeiro</option>
+            <option value={1}>Fevereiro</option>
+            <option value={2}>Março</option>
+            <option value={3}>Abril</option>
+            <option value={4}>Maio</option>
+            <option value={5}>Junho</option>
+            <option value={6}>Julho</option>
+            <option value={7}>Agosto</option>
+            <option value={8}>Setembro</option>
+            <option value={9}>Outubro</option>
+            <option value={10}>Novembro</option>
+            <option value={11}>Dezembro</option>
+          </select>
 
+          <select
+            value={ano}
+            onChange={(e) => setAno(Number(e.target.value))}
+            className="border p-2 rounded  bg-card"
+          >
+            <option value={2024}>2024</option>
+            <option value={2025}>2025</option>
+            <option value={2026}>2026</option>
+          </select>
+        </div>
       <Dashboard stats={stats} />
       <VendasChart vendas={vendas} />
 </div>
