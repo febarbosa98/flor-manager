@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, Timestamp } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -26,11 +27,16 @@ export async function listarGastos() {
   try {
     const q = query(collection(db, "gastos"), orderBy("data", "desc"));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      data: doc.data().data.toDate(),
-    })) as Gasto[];
+    return querySnapshot.docs.map((doc) => {
+  const data = doc.data();
+  const rawData = data.data;
+
+  return {
+    id: doc.id,
+    ...data,
+    data: rawData?.toDate ? rawData.toDate() : new Date(rawData),
+  };
+}) as Gasto[];
   } catch (error) {
     console.error("Erro ao listar gastos:", error);
     throw error;
@@ -46,11 +52,16 @@ export async function listarGastosPorPeriodo(inicio: Date, fim: Date) {
       orderBy("data", "desc")
     );
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      data: doc.data().data.toDate(),
-    })) as Gasto[];
+    return querySnapshot.docs.map((doc) => {
+  const data = doc.data();
+  const rawData = data.data;
+
+  return {
+    id: doc.id,
+    ...data,
+    data: rawData?.toDate ? rawData.toDate() : new Date(rawData),
+  };
+}) as Gasto[];
   } catch (error) {
     console.error("Erro ao listar gastos por período:", error);
     throw error;
@@ -60,7 +71,14 @@ export async function listarGastosPorPeriodo(inicio: Date, fim: Date) {
 export async function atualizarGasto(id: string, data: Partial<Omit<Gasto, "id">>) {
   try {
     const docRef = doc(db, "gastos", id);
-    await updateDoc(docRef, data);
+
+    const dadosAtualizados: any = { ...data };
+
+    if (data.data) {
+      dadosAtualizados.data = Timestamp.fromDate(data.data);
+    }
+
+    await updateDoc(docRef, dadosAtualizados);
   } catch (error) {
     console.error("Erro ao atualizar gasto:", error);
     throw error;

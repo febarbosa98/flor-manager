@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -15,6 +16,18 @@ interface Gasto {
 interface GastosTableProps {
   gastos: Gasto[];
   reload: () => void;
+}
+
+function parseData(data: any): Date {
+  if (!data) return new Date();
+
+  // Se for Timestamp do Firestore
+  if (data.toDate) {
+    return data.toDate();
+  }
+
+  // Se já for Date
+  return new Date(data);
 }
 
 // Converte Date → "YYYY-MM-DD" sem deslocar fuso
@@ -44,7 +57,7 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
     setEditTipo(gasto.tipo);
     setEditDescricao(gasto.descricao);
     setEditValor(gasto.valor.toString());
-    setEditData(toInputDate(new Date(gasto.data))); // ✅ sem UTC shift
+    setEditData(toInputDate(parseData(gasto.data))); // ✅ sem UTC shift
   }
 
   async function salvarEdicao(id: string) {
@@ -118,7 +131,7 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
               <td className="px-6 py-4 whitespace-nowrap">
                 {editando === gasto.id ? (
                   <input type="date" value={editData} onChange={(e) => setEditData(e.target.value)} className="w-full p-1 border rounded" />
-                ) : toInputDate(new Date(gasto.data)).split("-").reverse().join("/")}
+                ) : toInputDate(parseData(gasto.data)).split("-").reverse().join("/")}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 {editando === gasto.id ? (
@@ -156,7 +169,7 @@ export default function GastosTable({ gastos, reload }: GastosTableProps) {
                 </span>
               )}
               <span className="text-xs text-gray-400">
-                {toInputDate(new Date(gasto.data)).split("-").reverse().join("/")}
+                {toInputDate(parseData(gasto.data)).split("-").reverse().join("/")}
               </span>
             </div>
 
