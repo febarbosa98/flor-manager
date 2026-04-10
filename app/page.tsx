@@ -11,7 +11,7 @@ export default function Home(){
 <Navbar/>
 
 <div className="container mx-auto p-4">
-  <div className="grid grid-cols-2 gap-2">
+  <div className="grid md:grid-cols-2 gap-8 items-center">
 <div className="text-center flex flex-col justify-center text-ring">
 
     <h1 className="text-5xl font-semibold">Bem-vindo ao seu painel de gestão</h1>
