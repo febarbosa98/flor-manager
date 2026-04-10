@@ -56,10 +56,10 @@ export default function GastosPage() {
         <h1 className="text-2xl text-secondary font-bold mb-6">Gastos e Perdas</h1>
 
         {/* Filtros */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+        <div className="bg-white p-4 rounded-lg shadow-md mb-6 ">
           <h2 className="text-lg text-secondary font-semibold mb-4">Filtrar por Período</h2>
 
-          <div className="flex gap-4 items-end">
+          <div className="flex gap-4 items-end flex-wrap">
             <div>
               <label className="block text-sm mb-1">Data Início</label>
               <input

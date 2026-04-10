@@ -20,6 +20,7 @@ import { formatarMoeda } from "@/lib/formatarMoeda";
 export default function ProdutoTable({ produtos, reload }: any) {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
+  const [custo, setCusto] = useState("");
   const [estoque, setEstoque] = useState("");
   const [idAtual, setIdAtual] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function ProdutoTable({ produtos, reload }: any) {
   function abrirEdicao(produto: any) {
     setNome(produto.nome);
     setPreco(produto.preco);
+    setCusto(produto.custo);
     setEstoque(produto.estoque);
     setIdAtual(produto.id);
   }
@@ -42,6 +44,7 @@ try{
     await atualizarProduto(idAtual, {
       nome,
       preco: Number(preco),
+      custo: Number(custo),
       estoque: Number(estoque),
     });
     toast("Produto salvo com sucesso")
@@ -67,7 +70,7 @@ toast.error("Erro ao atualizar produto")
 
   return (
     <table className="w-full border card table-auto md:table-fixed">
-      <thead className="text-lg text-secondary font-semibold">
+      <thead className="md:text-lg text-sm text-secondary font-semibold">
         <tr className="border-b">
           <th className="p-2 text-left">Nome</th>
           <th className="p-2 text-left">Preço de custo</th>
@@ -79,14 +82,14 @@ toast.error("Erro ao atualizar produto")
 
       <tbody>
 {produtos.map((produto:any)=>(
-<tr key={produto.id} className="border-b ">
+<tr key={produto.id} className="border-b text-xs md:text-sm">
 
 <td className="p-2 capitalize ">{produto.nome}</td>
 <td className="p-2"> {formatarMoeda(produto.custo)}</td>
 <td className="p-2"> {formatarMoeda(produto.preco)}</td>
 <td className="p-2">{produto.estoque}</td>
 
-<td className="p-2 flex gap-2">
+<td className="p-2 flex gap-2 flex-col md:flex-row">
 
 <Button
 // variant="secondary"
@@ -141,6 +144,14 @@ Altere as informações do produto abaixo
 value={nome}
 onChange={(e)=>setNome(e.target.value)}
 className="input capitalize"
+/>
+
+<label className="mt-2">Preço de custo</label> 
+<Input
+type="number"
+value={custo}
+onChange={(e)=>setCusto(e.target.value)}
+className="input"
 />
 
 <label className="mt-2">Preço de venda</label> 

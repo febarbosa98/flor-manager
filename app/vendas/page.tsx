@@ -135,7 +135,7 @@ const vendasFiltradas = pedidos.filter((pedido: any) => {
         />
 
 
-<div className="flex gap-4 my-6 items-end ">
+<div className="flex gap-4 my-6 items-end flex-wrap">
 
 <div className="flex flex-col">
 <label className="text-sm">Data início</label>
