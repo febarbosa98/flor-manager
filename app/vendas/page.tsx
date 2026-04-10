@@ -46,11 +46,11 @@ export default function Vendas() {
 
   const queryClient = useQueryClient()
 
-const { data: vendas = [] } = useQuery({
-  queryKey: ["vendas"],
-  queryFn: listarVendasPorPedido, // 🔥 obrigatório
-  enabled: false
-})
+  const { data: vendas = [], isLoading } = useQuery({
+    queryKey: ["vendas"],
+    queryFn: listarVendasPorPedido, // obrigatorio
+    enabled: false
+  })
 
   const { data: stats } = useQuery({
     queryKey: ["dashboard", mes, ano],
@@ -88,7 +88,7 @@ const vendasFiltradas = pedidos.filter((pedido: any) => {
   const fim = inicio + itensPorPagina
   const vendasPagina = vendasFiltradas.slice(inicio, fim)
 
- if (!vendas.length) return <p>Carregando vendas...</p>
+  if (isLoading) return <p>Carregando vendas...</p>
   return (
     <div>
       <Navbar />
@@ -203,3 +203,4 @@ ${pagina === i + 1 ? "bg-primary text-white" : "bg-white text-black"}
     </div>
   );
 }
+
