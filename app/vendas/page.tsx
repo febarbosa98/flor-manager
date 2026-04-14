@@ -181,7 +181,7 @@ Limpar
           reload={() => queryClient.invalidateQueries({ queryKey: ["vendas"] })}
         />
 
-          <div className="flex gap-2 mt-6">
+          <div className="flex gap-2 my-6">
             {Array.from(
               { length: Math.ceil(vendasFiltradas.length / itensPorPagina) },
               (_, i) => (
@@ -197,7 +197,7 @@ ${pagina === i + 1 ? "bg-primary text-white" : "bg-white text-black"}
               ),
             )}
           </div>
-          <VendasChart vendas={vendasFiltradas}  />
+          {/* <VendasChart vendas={vendasFiltradas}  /> */}
         </div>
       </div>
     </div>
