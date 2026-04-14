@@ -1,92 +1,105 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { collection, getDocs } from "firebase/firestore"
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  Timestamp
+} from "firebase/firestore"
+
 import { db } from "./firebase"
 import { calcularTotalGastosMes, calcularTotalPerdasMes } from "./gastos"
 
-export async function buscarEstatisticas(ano:number, mes:number){
+export async function buscarEstatisticas(ano: number, mes: number) {
 
-const snapshot = await getDocs(collection(db,"vendas"))
+  const inicio = new Date(ano, mes, 1)
+  const fim = new Date(ano, mes + 1, 1)
 
-let vendasHoje = 0
-let lucroTotal = 0
+  
+  const q = query(
+      collection(db, "vendas"),
+      where("data", ">=", Timestamp.fromDate(inicio)),
+      where("data", "<", Timestamp.fromDate(fim))
+    )
+    
+    const snapshot = await getDocs(q)
+    
+    let vendasHoje = 0
+    let vendasMes = 0
+    let lucroMes = 0
+    let lucroTotal = 0
+    let produtosVendidos = 0
+    let taxasMes = 0
+    let valorLiquidoMes = 0
+    let valorLiquidoHoje = 0
 
-let vendasMes = 0
-let lucroMes = 0
-let produtosVendidos = 0
+  const produtos: any = {}
 
-const produtos:any = {}
+  const hoje = new Date().toDateString()
 
-const hoje = new Date().toDateString()
-const mesAtual = mes
-const anoAtual = ano
+  snapshot.forEach((doc) => {
+    const venda = doc.data()
+    if (!venda) return
 
-snapshot.forEach((doc)=>{
+    const total = Number(venda.total) || 0
+    const lucro = Number(venda.lucro) || 0
+    const quantidade = Number(venda.quantidade) || 0
+    const valorLiquido = !isNaN(Number(venda.valorLiquido))
+  ? Number(venda.valorLiquido)
+  : total - (Number(venda.taxa) || 0)
 
-const venda = doc.data()
+    const dataVenda = venda.data?.toDate?.()
+    if (!dataVenda) return
 
-if(!venda) return
+    // 🔹 HOJE
+    if (dataVenda.toDateString() === hoje) {
+      vendasHoje += total
+      valorLiquidoHoje += valorLiquido
+    }
 
-const total = Number(venda.total) || 0
-const lucro = Number(venda.lucro) || 0
-const quantidade = Number(venda.quantidade) || 0
+    // 🔹 MÊS
+    vendasMes += total
+    lucroMes += lucro
+    produtosVendidos += quantidade
+    valorLiquidoMes += valorLiquido
 
-if(venda.data){
+    // 🔹 MAIS VENDIDO
+    if (!produtos[venda.produto]) {
+      produtos[venda.produto] = 0
+    }
+    produtos[venda.produto] += quantidade
 
-const dataVenda = venda.data.toDate()
+    lucroTotal += lucro
 
-// vendas hoje
-if(dataVenda.toDateString() === hoje){
-vendasHoje += total
-}
+    const taxa = Number(venda.taxa) || 0
+    taxasMes += taxa
+  })
 
-// vendas do mês
-if(
-dataVenda.getMonth() === mesAtual &&
-dataVenda.getFullYear() === anoAtual
-){
-vendasMes += total
-lucroMes += lucro
-produtosVendidos += quantidade
+  let maisVendido = "-"
+  let maior = 0
 
-if(!produtos[venda.produto]){
-produtos[venda.produto] = 0
-}
+  Object.entries(produtos).forEach(([nome, qtd]: any) => {
+    if (qtd > maior) {
+      maior = qtd
+      maisVendido = nome
+    }
+  })
 
-produtos[venda.produto] += quantidade
+  const gastosMes = await calcularTotalGastosMes(mes + 1, ano)
+  const perdasMes = await calcularTotalPerdasMes(mes + 1, ano)
+  
 
-}
-
-}
-
-lucroTotal += lucro
-
-})
-
-let maisVendido = "-"
-let maior = 0
-
-Object.entries(produtos).forEach(([nome,qtd]:any)=>{
-
-if(qtd > maior){
-maior = qtd
-maisVendido = nome
-}
-
-})
-
-// Calcular gastos e perdas do mês
-const gastosMes = await calcularTotalGastosMes(mesAtual + 1, anoAtual)
-const perdasMes = await calcularTotalPerdasMes(mesAtual + 1, anoAtual)
-
-return {
-vendasHoje,
-lucroTotal,
-vendasMes,
-lucroMes,
-produtosVendidos,
-maisVendido,
-gastosMes,
-perdasMes
-}
-
+  return {
+    vendasHoje,
+    vendasMes,
+    lucroMes,
+    lucroTotal,
+    produtosVendidos,
+    maisVendido,
+    gastosMes,
+    perdasMes,
+    taxasMes,
+    valorLiquidoMes,
+    valorLiquidoHoje
+  }
 }

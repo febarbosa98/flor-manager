@@ -64,44 +64,37 @@ export async function criarVendaComPedido(
   formaPagamento: string
 ) {
   const ref = doc(db, "produtos", produtoId)
-
   const produtoDoc = await getDoc(ref)
   const produto = produtoDoc.data()
 
-  if (!produto) {
-    throw new Error("Produto não encontrado")
-  }
+  if (!produto) throw new Error("Produto não encontrado")
 
   const preco = Number(produto.preco)
   const custo = Number(produto.custo)
   const estoque = Number(produto.estoque)
 
-  const novoEstoque = estoque - quantidade
-
   await updateDoc(ref, {
-    estoque: novoEstoque
+    estoque: estoque - quantidade
   })
 
   const total = preco * quantidade
-  const lucroBruto = (preco - custo) * quantidade
 
   // 🔥 TAXA
-  const taxaPercentual = TAXAS[formaPagamento] || 0
+  const taxaPercentual = TAXAS[formaPagamento as keyof typeof TAXAS] || 0
   const valorTaxa = (total * taxaPercentual) / 100
 
-  // 🔥 VALOR FINAL
-  const valorLiquido = total - valorTaxa
-  const lucroLiquido = lucroBruto - valorTaxa
+  // 🔥 LUCRO REAL
+  const lucro = total - valorTaxa - (custo * quantidade)
 
   await addDoc(collection(db, "vendas"), {
     produtoId,
     produto: produto.nome,
     quantidade,
     total,
-    lucro: lucroLiquido,
+    lucro,
     taxa: valorTaxa,
-    valorLiquido,
     formaPagamento,
+    valorLiquido: total - valorTaxa,
     pedidoId,
     data: serverTimestamp()
   })

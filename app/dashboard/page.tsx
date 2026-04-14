@@ -9,13 +9,25 @@ import { listarVendasPorMes } from "@/lib/vendas"
 import { useRealtimeGastos } from "@/components/hooks/useRealtimeGastos"
 import { useRealtimeVendas } from "@/components/hooks/useRealtimeVendas"
 import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
+import { useEffect } from "react"
 
 export default function Home() {
+
   useRealtimeVendas()
 useRealtimeGastos()
   const hoje = new Date()
   const [mes, setMes] = useState(hoje.getMonth())
    const [ano, setAno] = useState(hoje.getFullYear())
+   const queryClient = useQueryClient()
+   
+   useEffect(() => {
+  const interval = setInterval(() => {
+    queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+  }, 2000)
+
+  return () => clearInterval(interval)
+}, [])
 
   const { data: vendas = [] } = useQuery({
     queryKey: ["vendas-mes", mes, ano],

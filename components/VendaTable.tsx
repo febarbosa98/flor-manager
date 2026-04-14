@@ -94,6 +94,7 @@ export default function VendaTable({ vendas, reload }: any) {
                     <th className="p-2 ">Forma de Pagamento</th>
                     <th className="p-2 ">Total</th>
                     <th className="p-2 ">Taxa</th>
+                    <th className="p-2 ">Total liquido</th>
                     <th className="p-2 ">Lucro</th>
                     <th className="p-2 ">Ações</th>
                   </tr>
@@ -112,9 +113,12 @@ export default function VendaTable({ vendas, reload }: any) {
                       <td className="p-2  font-semibold">
                         R$ {Number(item.total).toFixed(2)}
                       </td>
-                      
+                                          
                       <td className="p-2  text-red-500">
                         R$ {Number(item.taxa).toFixed(2)}
+                      </td>
+                      <td className="p-2  font-semibold">
+                        R$ {Number(item.valorLiquido).toFixed(2)}
                       </td>
                       <td className="p-2  text-green-600">
                         R$ {Number(item.lucro).toFixed(2)}

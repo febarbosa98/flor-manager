@@ -12,7 +12,7 @@ const [nome,setNome] = useState("")
 const [custo,setCusto] = useState(0)
 const [estoque,setEstoque] = useState(0)
 const [preco,setPreco] = useState(0)
-const [lucroPercent,setLucroPercent] = useState(50)
+const [lucroPercent,setLucroPercent] = useState(100)
 
 
 useEffect(()=>{
