@@ -38,7 +38,9 @@ export default function VendaTable({ vendas, reload }: any) {
                     Pedido #{pedido.id.slice(-6)}
                   </span>
                   <span className="text-sm text-gray-600 ml-2">
-                    {pedido.data?.toDate ? pedido.data.toDate().toLocaleDateString("pt-BR") : "-"}
+                    {pedido.data?.toDate
+  ? pedido.data.toDate().toLocaleString("pt-BR")
+  : "-"}
                   </span>
                 </div>
                 <span className="text-sm bg-accent text-accent-foreground px-2 py-1 rounded w-fit">
@@ -173,7 +175,7 @@ export default function VendaTable({ vendas, reload }: any) {
                       </div>
                       <div>
                         <div className="text-xs text-gray-400">Forma de Pagamento</div>
-                        <div className="font-medium text-gray-800">
+                        <div className="font-medium text-gray-800 capitalize">
                           {item.formaPagamento}
                         </div>
                       </div>
@@ -181,6 +183,18 @@ export default function VendaTable({ vendas, reload }: any) {
                         <div className="text-xs text-gray-400">Total</div>
                         <div className="font-semibold text-gray-800">
                           R$ {Number(item.total).toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-400">Taxa</div>
+                        <div className="font-semibold text-red-600">
+                          R$ {Number(item.taxa).toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-400">Total liquido</div>
+                        <div className="font-semibold text-gray-800">
+                          R$ {Number(item.valorLiquido).toFixed(2)}
                         </div>
                       </div>
                     </div>
