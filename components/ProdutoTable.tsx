@@ -69,7 +69,10 @@ toast.error("Erro ao atualizar produto")
   }
 
   return (
-    <table className="w-full border card table-auto md:table-fixed">
+    <div className="max-h-[500] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
+
+    
+    <table className="w-full border card table-auto md:table-fixed ">
       <thead className="md:text-lg text-sm text-secondary font-semibold">
         <tr className="border-b">
           <th className="p-2 text-left">Nome</th>
@@ -180,5 +183,7 @@ Salvar
 
 </Dialog>
     </table>
+
+    </div>
   );
 }
