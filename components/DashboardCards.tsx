@@ -8,7 +8,7 @@ export default function Dashboard({ stats }: any) {
   if (!stats) return null;
 
   return (
-    <div className="flex flex-wrap  gap-5 mb-10">
+    <div className="flex flex-wrap  gap-5 mb-6">
       <div className="p-6 border rounded-lg flex-auto text-center justify-items-center  bg-card">
         <h2 className="text-sm text-gray-500">Vendas hoje</h2>
         <div className="flex gap-2 mt-2">
@@ -84,12 +84,6 @@ export default function Dashboard({ stats }: any) {
         </div>
       </div>
 
-     
-
-     
-
-      
-
       <div className="p-6 border rounded-lg flex-auto text-center justify-items-center  bg-card">
         <h2 className="text-sm text-gray-500">Produtos vendidos</h2>
         <div className="flex gap-2 mt-2">
@@ -97,15 +91,7 @@ export default function Dashboard({ stats }: any) {
           <p className="text-2xl font-bold">{stats.produtosVendidos}</p>
         </div>
       </div>
-
-      <div className="p-6 border rounded-lg flex-auto text-center justify-items-center  bg-card">
-        <h2 className="text-sm text-gray-500">Produto mais vendido</h2>
-        <div className="flex gap-2 mt-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="bg-yellow-400 rounded-3xl p-1 lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          <p className="text-2xl font-bold capitalize">{stats.maisVendido}</p>
-        </div>
-      </div>
-      
+       
       <div className="p-6 border rounded-lg flex-auto text-center justify-items-center  bg-card">
         <h2 className="text-sm text-gray-500">Taxas do mês</h2>
 

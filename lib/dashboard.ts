@@ -85,8 +85,34 @@ export async function buscarEstatisticas(ano: number, mes: number) {
     }
   })
 
+  const topProdutos = Object.entries(produtos)
+  .map(([nome, quantidade]: any) => ({ nome, quantidade }))
+  .sort((a, b) => b.quantidade - a.quantidade)
+  .slice(0, 5)
+
   const gastosMes = await calcularTotalGastosMes(mes + 1, ano)
   const perdasMes = await calcularTotalPerdasMes(mes + 1, ano)
+
+
+  const snapshotProdutos = await getDocs(collection(db, "produtos"))
+
+const estoqueBaixo: any[] = []
+
+snapshotProdutos.forEach((doc) => {
+  const p = doc.data()
+
+  const estoque = Number(p.estoque) || 0
+
+  if (estoque <= 3) { // 🔥 define o limite aqui
+    estoqueBaixo.push({
+      id: doc.id,
+      nome: p.nome,
+      estoque
+    })
+  }
+})
+
+estoqueBaixo.sort((a, b) => a.estoque - b.estoque)
   
 
   return {
@@ -100,6 +126,8 @@ export async function buscarEstatisticas(ano: number, mes: number) {
     perdasMes,
     taxasMes,
     valorLiquidoMes,
-    valorLiquidoHoje
+    valorLiquidoHoje,
+    topProdutos,
+     estoqueBaixo
   }
 }

@@ -11,6 +11,8 @@ import { useRealtimeVendas } from "@/components/hooks/useRealtimeVendas"
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
+import { TopProdutos } from "@/components/TopProdutos"
+import { EstoqueBaixo } from "@/components/EstoqueBaixo"
 
 export default function Home() {
 
@@ -20,7 +22,7 @@ useRealtimeGastos()
   const [mes, setMes] = useState(hoje.getMonth())
    const [ano, setAno] = useState(hoje.getFullYear())
    const queryClient = useQueryClient()
-   
+
    useEffect(() => {
   const interval = setInterval(() => {
     queryClient.invalidateQueries({ queryKey: ["dashboard"] })
@@ -75,8 +77,16 @@ useRealtimeGastos()
             <option value={2026}>2026</option>
           </select>
         </div>
+
       <Dashboard stats={stats} />
+
+      <div className="grid md:grid-cols-2 gap-6 mt-0">
+        <TopProdutos data={stats?.topProdutos} />
+        <EstoqueBaixo data={stats?.estoqueBaixo} />
+      </div>
+
       <VendasChart vendas={vendas} />
+      
 </div>
     </div>
   )
