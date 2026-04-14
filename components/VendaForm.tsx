@@ -18,6 +18,13 @@ interface ItemCarrinho {
   subtotal: number;
 }
 
+const TAXAS = {
+  dinheiro: 0,
+  pix: 0,
+  debito: 1.79,
+  credito: 3.69,
+}
+
 export default function VendaForm({ reload }: any) {
   const [produtos, setProdutos] = useState<any[]>([]);
   const [produtoId, setProdutoId] = useState("");
@@ -27,6 +34,7 @@ export default function VendaForm({ reload }: any) {
   const [busca, setBusca] = useState("");
   const [produtosFiltrados, setProdutosFiltrados] = useState<any[]>([]);
   const [mostrarLista, setMostrarLista] = useState(false);
+  const [formaPagamento, setFormaPagamento] = useState("credito");
 
   useEffect(() => {
     async function carregar() {
@@ -73,25 +81,51 @@ export default function VendaForm({ reload }: any) {
     setCarrinho(carrinho.filter((item) => item.produtoId !== produtoId));
   };
 
-  const calcularTotal = () => carrinho.reduce((total, item) => total + item.subtotal, 0);
+
+  const calcularTotal = () =>
+  carrinho.reduce((total, item) => total + item.subtotal, 0)
+
+const calcularTaxa = () => {
+  const total = calcularTotal()
+  const taxa = TAXAS[formaPagamento as keyof typeof TAXAS] || 0
+  return (total * taxa) / 100
+}
+
+const calcularLiquido = () => {
+  return calcularTotal() - calcularTaxa()
+}
 
   const registrarVendas = async () => {
-    if (carrinho.length === 0) {
-      toast.error("Adicione produtos ao carrinho");
-      return;
-    }
-    try {
-      const vendas = carrinho.map((item) => ({ produtoId: item.produtoId, quantidade: item.quantidade }));
-      await criarVendas(vendas);
-      toast.success("Vendas registradas com sucesso!");
-      setCarrinho([]);
-      setModalAberto(false);
-      reload();
-    } catch (error) {
-      console.error("Erro ao registrar vendas:", error);
-      toast.error("Erro ao registrar vendas");
-    }
-  };
+  if (carrinho.length === 0) {
+    toast.error("Adicione produtos ao carrinho")
+    return
+  }
+
+  if (!formaPagamento) {
+    toast.error("Selecione a forma de pagamento")
+    return
+  }
+
+  try {
+    const vendas = carrinho.map((item) => ({
+      produtoId: item.produtoId,
+      quantidade: item.quantidade
+    }))
+
+    // 🔥 AGORA ENVIA FORMA DE PAGAMENTO
+    await criarVendas(vendas, formaPagamento)
+
+    toast.success("Venda registrada com sucesso!")
+
+    setCarrinho([])
+    setModalAberto(false)
+    reload?.()
+
+  } catch (error) {
+    console.error(error)
+    toast.error("Erro ao registrar venda")
+  }
+}
 
   function selecionarProduto(produto: any) {
     setProdutoId(produto.id);
@@ -201,20 +235,54 @@ export default function VendaForm({ reload }: any) {
                   </div>
 
                   {/* Total e registrar */}
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-base sm:text-xl font-bold">Total:</span>
-                      <span className="text-xl sm:text-2xl font-bold text-green-600">
-                        R$ {Number(calcularTotal()).toFixed(2)}
-                      </span>
-                    </div>
-                    <Button
-                      onClick={registrarVendas}
-                      className="w-full bg-primary cursor-pointer hover:bg-green-500 text-white py-3 text-base sm:text-lg"
-                    >
-                      Registrar Venda (R$ {Number(calcularTotal()).toFixed(2)})
-                    </Button>
-                  </div>
+                  <div className="border-t pt-4 space-y-3">
+
+  {/* TOTAL BRUTO */}
+  <div className="flex justify-between">
+    <span>Total bruto:</span>
+    <span className="font-semibold">
+      R$ {calcularTotal().toFixed(2)}
+    </span>
+  </div>
+
+  {/* TAXA */}
+  <div className="flex justify-between text-red-500">
+    <span>Taxa ({TAXAS[formaPagamento as keyof typeof TAXAS]}%):</span>
+    <span>- R$ {calcularTaxa().toFixed(2)}</span>
+  </div>
+
+  {/* LÍQUIDO */}
+  <div className="flex justify-between text-green-600 text-lg font-bold">
+    <span>Você recebe:</span>
+    <span>R$ {calcularLiquido().toFixed(2)}</span>
+  </div>
+
+  {/* FORMA DE PAGAMENTO */}
+  <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+    <span className="text-sm text-gray-600">
+      Forma de pagamento
+    </span>
+
+    <select
+      value={formaPagamento}
+      onChange={(e) => setFormaPagamento(e.target.value)}
+      className="border rounded py-2 px-3"
+    >
+      <option value="pix">PIX</option>
+      <option value="dinheiro">Dinheiro</option>
+      <option value="debito">Débito</option>
+      <option value="credito">Crédito</option>
+    </select>
+  </div>
+
+  {/* BOTÃO */}
+  <Button
+    onClick={registrarVendas}
+    className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-3 text-lg"
+  >
+    Finalizar Venda
+  </Button>
+</div>
                 </div>
               </DialogContent>
             </Dialog>

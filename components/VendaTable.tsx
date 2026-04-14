@@ -85,32 +85,41 @@ export default function VendaTable({ vendas, reload }: any) {
             <div className="p-4">
 
               {/* Tabela — apenas desktop */}
-              <table className="hidden md:table w-full table-fixed">
+              <table className="w-full   md:table-fixed text-center hidden md:table">
                 <thead className="text-sm font-bold">
                   <tr className="border-b">
-                    <th className="p-2 text-left">Produto</th>
-                    <th className="p-2 text-center">Qtd</th>
-                    <th className="p-2 text-right">Preço Unit.</th>
-                    <th className="p-2 text-right">Total</th>
-                    <th className="p-2 text-right">Lucro</th>
-                    <th className="p-2 text-center">Ações</th>
+                    <th className="p-2 ">Produto</th>
+                    <th className="p-2 ">Qtd</th>
+                    <th className="p-2 ">Preço Unit.</th>
+                    <th className="p-2 ">Forma de Pagamento</th>
+                    <th className="p-2 ">Total</th>
+                    <th className="p-2 ">Taxa</th>
+                    <th className="p-2 ">Lucro</th>
+                    <th className="p-2 ">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pedido.itens.map((item: any) => (
                     <tr key={item.id} className="border-b">
                       <td className="p-2 capitalize">{item.produto}</td>
-                      <td className="p-2 text-center">{item.quantidade}</td>
-                      <td className="p-2 text-right">
+                      <td className="p-2 ">{item.quantidade}</td>
+                      <td className="p-2 ">
                         R$ {Number(item.total / item.quantidade).toFixed(2)}
                       </td>
-                      <td className="p-2 text-right font-semibold">
+                      <td className="p-2  capitalize">
+                        {item.formaPagamento}
+                      </td>
+                      <td className="p-2  font-semibold">
                         R$ {Number(item.total).toFixed(2)}
                       </td>
-                      <td className="p-2 text-right text-green-600">
+                      
+                      <td className="p-2  text-red-500">
+                        R$ {Number(item.taxa).toFixed(2)}
+                      </td>
+                      <td className="p-2  text-green-600">
                         R$ {Number(item.lucro).toFixed(2)}
                       </td>
-                      <td className="p-2 text-center">
+                      <td className="p-2 ">
                         <Button
                           className="btn-red"
                           size="sm"
@@ -147,7 +156,7 @@ export default function VendaTable({ vendas, reload }: any) {
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 text-sm text-gray-600">
+                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
                       <div>
                         <div className="text-xs text-gray-400">Quantidade</div>
                         <div className="font-medium text-gray-800">{item.quantidade}</div>
@@ -159,13 +168,18 @@ export default function VendaTable({ vendas, reload }: any) {
                         </div>
                       </div>
                       <div>
+                        <div className="text-xs text-gray-400">Forma de Pagamento</div>
+                        <div className="font-medium text-gray-800">
+                          {item.formaPagamento}
+                        </div>
+                      </div>
+                      <div>
                         <div className="text-xs text-gray-400">Total</div>
                         <div className="font-semibold text-gray-800">
                           R$ {Number(item.total).toFixed(2)}
                         </div>
                       </div>
                     </div>
-
                     <div className="text-sm">
                       <span className="text-xs text-gray-400">Lucro: </span>
                       <span className="font-semibold text-green-600">
