@@ -68,7 +68,7 @@ export async function atualizarGasto(
   data: Partial<Omit<Gasto, "id">>
 ): Promise<void> {
   const docRef = doc(db, "gastos", id)
-  const dadosAtualizados: Partial<Omit<Gasto, "id">> = { ...data }
+  const dadosAtualizados: Record<string, unknown> = { ...data }
 
   if (data.data) {
     dadosAtualizados.data = Timestamp.fromDate(data.data)
