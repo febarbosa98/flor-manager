@@ -38,12 +38,15 @@ export default function VendaTable({ vendas, reload }: any) {
                     Pedido #{pedido.id.slice(-6)}
                   </span>
                   <span className="text-sm text-gray-600 ml-2">
-  🕒{" "}
-  {pedido.data?.toDate &&
-    pedido.data.toDate().toLocaleTimeString("pt-BR", {
+  {pedido.data?.toDate && (
+  <>
+    {pedido.data.toDate().toLocaleDateString("pt-BR")} 🕒
+    {pedido.data.toDate().toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     })}
+  </>
+)}
 </span>
                 </div>
                 <span className="text-sm bg-accent text-accent-foreground px-2 py-1 rounded w-fit">
