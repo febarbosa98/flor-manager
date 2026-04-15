@@ -61,7 +61,13 @@ export default function VendaTable({ vendas, reload }: any) {
                   <div className="font-bold text-lg text-green-600">
                     R$ {Number(pedido.total).toFixed(2)}
                   </div>
+                  <div className="flex flex-col ">
+                    <span className="text-sm text-gray-500">Forma de pagamento </span>
+                    <span className="capitalize text-sm">{pedido.itens[0].formaPagamento}</span>
+                                 
+                  </div>
                 </div>
+                
 
                 <div className="flex gap-2">
                   <Button
@@ -99,7 +105,6 @@ export default function VendaTable({ vendas, reload }: any) {
                     <th className="p-2 ">Produto</th>
                     <th className="p-2 ">Qtd</th>
                     <th className="p-2 ">Preço Unit.</th>
-                    <th className="p-2 ">Forma de Pagamento</th>
                     <th className="p-2 ">Total</th>
                     <th className="p-2 ">Taxa</th>
                     <th className="p-2 ">Total liquido</th>
@@ -115,9 +120,7 @@ export default function VendaTable({ vendas, reload }: any) {
                       <td className="p-2 ">
                         R$ {Number(item.total / item.quantidade).toFixed(2)}
                       </td>
-                      <td className="p-2  capitalize">
-                        {item.formaPagamento}
-                      </td>
+                      
                       <td className="p-2  font-semibold">
                         R$ {Number(item.total).toFixed(2)}
                       </td>
