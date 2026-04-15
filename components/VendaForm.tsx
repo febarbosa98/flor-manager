@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { listarProdutos } from "@/lib/produtos";
-import { criarVendas } from "@/lib/vendas";
+import { criarVendas, type FormaPagamento } from "@/lib/vendas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -34,7 +34,7 @@ export default function VendaForm({ reload }: any) {
   const [busca, setBusca] = useState("");
   const [produtosFiltrados, setProdutosFiltrados] = useState<any[]>([]);
   const [mostrarLista, setMostrarLista] = useState(false);
-  const [formaPagamento, setFormaPagamento] = useState("credito");
+  const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>("credito");
 
   useEffect(() => {
     async function carregar() {
@@ -265,7 +265,7 @@ const calcularLiquido = () => {
 
     <select
       value={formaPagamento}
-      onChange={(e) => setFormaPagamento(e.target.value)}
+      onChange={(e) => setFormaPagamento(e.target.value as FormaPagamento)}
       className="border rounded py-2 px-3"
     >
       <option value="pix">PIX</option>

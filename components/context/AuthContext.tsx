@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import { auth } from "@/lib/auth"
-import { onAuthStateChanged, User } from "firebase/auth"
+import { onAuthStateChanged, type User } from "firebase/auth"
 
 interface AuthContextType {
   user: User | null
@@ -15,18 +15,25 @@ const AuthContext = createContext<AuthContextType>({
   loading: true
 })
 
-export function AuthProvider({ children }: any) {
+interface AuthProviderProps {
+  children: ReactNode
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user)
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser)
       setLoading(false)
 
-      // sincroniza cookie (middleware)
-      if (user) {
-        const token = await user.getIdToken()
+      if (typeof document === "undefined") {
+        return
+      }
+
+      if (currentUser) {
+        const token = await currentUser.getIdToken()
         document.cookie = `token=${token}; path=/; max-age=86400`
       } else {
         document.cookie = "token=; path=/; max-age=0"

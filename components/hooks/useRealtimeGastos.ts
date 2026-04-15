@@ -13,5 +13,5 @@ export function useRealtimeGastos() {
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [queryClient])
 }

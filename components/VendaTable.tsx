@@ -2,24 +2,55 @@
 "use client"
 
 import { useState } from "react";
-import { deletarVenda } from "@/lib/vendas";
+import { deletarVenda, type PedidoVenda } from "@/lib/vendas";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
 
-export default function VendaTable({ vendas, reload }: any) {
+interface VendaTableProps {
+  vendas: PedidoVenda[]
+  reload: () => void
+}
+
+export default function VendaTable({ vendas, reload }: VendaTableProps) {
   const [pedidoExpandido, setPedidoExpandido] = useState<string | null>(null);
+  const [deletingPedido, setDeletingPedido] = useState<string | null>(null);
+  const [deletingItem, setDeletingItem] = useState<string | null>(null);
 
   async function remover(id: string) {
-    await deletarVenda(id);
-    reload();
+    setDeletingItem(id)
+
+    try {
+      await deletarVenda(id)
+      toast.success("Item excluído com sucesso")
+      reload()
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao excluir item")
+    } finally {
+      setDeletingItem(null)
+    }
   }
 
   async function removerPedido(pedidoId: string) {
-    const pedido = vendas.find((p: any) => p.id === pedidoId);
-    if (pedido) {
+    const pedido = vendas.find((p) => p.id === pedidoId)
+    if (!pedido) {
+      toast.error("Pedido não encontrado")
+      return
+    }
+
+    setDeletingPedido(pedidoId)
+
+    try {
       for (const item of pedido.itens) {
-        await deletarVenda(item.id);
+        await deletarVenda(item.id)
       }
-      reload();
+      toast.success("Pedido excluído com sucesso")
+      reload()
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao excluir pedido")
+    } finally {
+      setDeletingPedido(null)
     }
   }
 
@@ -81,13 +112,14 @@ export default function VendaTable({ vendas, reload }: any) {
                   <Button
                     className="btn-red"
                     size="sm"
+                    disabled={deletingPedido === pedido.id}
                     onClick={() => {
                       if (confirm("Tem certeza que deseja excluir este pedido inteiro?")) {
-                        removerPedido(pedido.id);
+                        removerPedido(pedido.id)
                       }
                     }}
                   >
-                    Excluir
+                    {deletingPedido === pedido.id ? "Excluindo..." : "Excluir"}
                   </Button>
                 </div>
               </div>
@@ -138,13 +170,14 @@ export default function VendaTable({ vendas, reload }: any) {
                         <Button
                           className="btn-red"
                           size="sm"
+                          disabled={deletingItem === item.id}
                           onClick={() => {
                             if (confirm("Tem certeza que deseja excluir este item?")) {
-                              remover(item.id);
+                              remover(item.id)
                             }
                           }}
                         >
-                          Excluir
+                          {deletingItem === item.id ? "Excluindo..." : "Excluir"}
                         </Button>
                       </td>
                     </tr>
@@ -161,13 +194,14 @@ export default function VendaTable({ vendas, reload }: any) {
                       <Button
                         className="btn-red"
                         size="sm"
+                        disabled={deletingItem === item.id}
                         onClick={() => {
                           if (confirm("Tem certeza que deseja excluir este item?")) {
-                            remover(item.id);
+                            remover(item.id)
                           }
                         }}
                       >
-                        Excluir
+                        {deletingItem === item.id ? "Excluindo..." : "Excluir"}
                       </Button>
                     </div>
 

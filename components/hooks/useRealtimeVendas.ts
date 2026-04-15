@@ -9,12 +9,10 @@ export function useRealtimeVendas() {
 
   useEffect(() => {
     const unsubscribe = listenVendas((data) => {
-        console.log("🔥 atualizou realtime", data)
       queryClient.setQueryData(["vendas"], data)
-
       queryClient.invalidateQueries({ queryKey: ["dashboard"] })
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [queryClient])
 }
