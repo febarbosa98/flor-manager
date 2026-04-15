@@ -41,8 +41,10 @@ export default function VendaTable({ vendas, reload }: VendaTableProps) {
     setDeletingPedido(pedidoId)
 
     try {
-      for (const item of pedido.itens) {
-        await deletarVenda(item.id)
+      if (pedido.itens && Array.isArray(pedido.itens)) {
+        for (const item of pedido.itens) {
+          await deletarVenda(item.id)
+        }
       }
       toast.success("Pedido excluído com sucesso")
       reload()
@@ -69,10 +71,10 @@ export default function VendaTable({ vendas, reload }: VendaTableProps) {
                     Pedido #{pedido.id.slice(-6)}
                   </span>
                   <span className="text-sm text-gray-600 ml-2">
-  {pedido.data?.toDate && (
+  {pedido.data && (
   <>
-    {pedido.data.toDate().toLocaleDateString("pt-BR")} 🕒
-    {pedido.data.toDate().toLocaleTimeString("pt-BR", {
+    {new Date(pedido.data).toLocaleDateString("pt-BR")} 🕒
+    {new Date(pedido.data).toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     })}
@@ -81,7 +83,7 @@ export default function VendaTable({ vendas, reload }: VendaTableProps) {
 </span>
                 </div>
                 <span className="text-sm bg-accent text-accent-foreground px-2 py-1 rounded w-fit">
-                  {pedido.itens.length} produto(s)
+                  {pedido.itens?.length ?? 0} produto(s)
                 </span>
               </div>
 
@@ -94,7 +96,7 @@ export default function VendaTable({ vendas, reload }: VendaTableProps) {
                   </div>
                   <div className="flex flex-col ">
                     <span className="text-sm text-gray-500">Forma de pagamento </span>
-                    <span className="capitalize text-sm">{pedido.itens[0].formaPagamento}</span>
+                    <span className="capitalize text-sm">{pedido.itens?.[0]?.formaPagamento ?? "N/A"}</span>
                                  
                   </div>
                 </div>
@@ -145,7 +147,7 @@ export default function VendaTable({ vendas, reload }: VendaTableProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {pedido.itens.map((item: any) => (
+                  {pedido.itens?.map((item: any) => (
                     <tr key={item.id} className="border-b">
                       <td className="p-2 capitalize">{item.produto}</td>
                       <td className="p-2 ">{item.quantidade}</td>
@@ -187,7 +189,7 @@ export default function VendaTable({ vendas, reload }: VendaTableProps) {
 
               {/* Cards — apenas mobile */}
               <div className="flex flex-col gap-3 md:hidden">
-                {pedido.itens.map((item: any) => (
+                {pedido.itens?.map((item: any) => (
                   <div key={item.id} className="border rounded-lg p-3 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold capitalize text-secondary">{item.produto}</span>

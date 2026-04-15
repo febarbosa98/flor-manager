@@ -6,32 +6,10 @@ import Navbar from "@/components/Navbar"
 import VendaForm from "@/components/VendaForm"
 import VendaTable from "@/components/VendaTable"
 import Dashboard from "@/components/DashboardCards"
-import VendasChart from "@/components/VendasChart"
-import { listarVendasPorPedido } from "@/lib/vendas"
+// import VendasChart from "@/components/VendasChart"
+import { listarVendasPorPedido, type PedidoVenda } from "@/lib/vendas"
 import { buscarEstatisticas } from "@/lib/dashboard"
 import { useRealtimeVendas } from "@/components/hooks/useRealtimeVendas"
-
-function agruparPedidos(vendas: any[]) {
-  const pedidosMap: any = {}
-
-  vendas.forEach((v) => {
-    const pedidoId = v.pedidoId || v.id // fallback importante
-
-    if (!pedidosMap[pedidoId]) {
-      pedidosMap[pedidoId] = {
-        id: pedidoId,
-        data: v.data,
-        total: 0,
-        itens: []
-      }
-    }
-
-    pedidosMap[pedidoId].itens.push(v)
-    pedidosMap[pedidoId].total += Number(v.total) || 0
-  })
-
-  return Object.values(pedidosMap)
-}
 
 export default function Vendas() {
   useRealtimeVendas()
@@ -46,10 +24,10 @@ export default function Vendas() {
 
   const queryClient = useQueryClient()
 
-  const { data: vendas = [], isLoading } = useQuery({
+  const { data: vendas = [], isLoading } = useQuery<PedidoVenda[]>({
     queryKey: ["vendas"],
-    queryFn: listarVendasPorPedido, // obrigatorio
-    enabled: false
+    queryFn: listarVendasPorPedido,
+    staleTime: 1000 * 60 * 5
   })
 
   const { data: stats } = useQuery({
@@ -63,11 +41,9 @@ export default function Vendas() {
 }
 
   // 🔥 filtro LOCAL (sem chamar Firebase)
-const pedidos = agruparPedidos(vendas)
-
-const vendasFiltradas = pedidos.filter((pedido: any) => {
-  const data = pedido.data?.toDate
-    ? pedido.data.toDate()
+const vendasFiltradas = vendas.filter((pedido: PedidoVenda) => {
+  const data = pedido.data instanceof Date
+    ? pedido.data
     : new Date(pedido.data)
 
   const mesmoMes =

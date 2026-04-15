@@ -1,6 +1,5 @@
 "use client"
 import Navbar from "@/components/Navbar"
-import Image from "next/image"
 
 export default function Home(){
 
@@ -18,11 +17,12 @@ export default function Home(){
     <p className="text-2xl mt-4">Acompanhe suas vendas, controle seus gastos e tome decisões mais rápidas com dados em tempo real.</p>
 </div>
 
-<Image
+<img
       src="/LogoFloricultura2.png"
       width={500}
       height={500}
-      alt="Picture of the author"
+      alt="Logo Floricultura"
+      className="mx-auto"
       />
 
       </div>
